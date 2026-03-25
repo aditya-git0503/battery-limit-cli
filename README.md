@@ -28,11 +28,11 @@ If this file does not exist on your system, the tool will not work.
 
 ## Installation
 
-### Option 1: Install using .deb package
+Download the latest release from the Releases section.
 
-Download the .deb file from the repository and install it:
+Then run:
 
-sudo dpkg -i battery-deb.deb
+sudo dpkg -i battery-limit_1.0_all.deb
 
 ---
 
