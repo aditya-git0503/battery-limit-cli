@@ -40,7 +40,7 @@ sudo dpkg -i battery-deb.deb
 
 Clone the repository:
 
-git clone https://github.com/YOUR_USERNAME/battery-limit-cli.git
+git clone https://github.com/aditya-git0503/battery-limit-cli.git
 cd battery-limit-cli
 
 Copy the script to a system path:
