@@ -41,11 +41,13 @@ sudo dpkg -i battery-deb.deb
 Clone the repository:
 
 git clone https://github.com/aditya-git0503/battery-limit-cli.git
+
 cd battery-limit-cli
 
 Copy the script to a system path:
 
 sudo cp battery /usr/local/bin/battery
+
 sudo chmod +x /usr/local/bin/battery
 
 ---
@@ -55,7 +57,9 @@ sudo chmod +x /usr/local/bin/battery
 Set battery limit:
 
 battery 60
+
 battery 80
+
 battery 100
 
 Check battery status:
@@ -67,8 +71,11 @@ battery status
 ## Example Output
 
 Battery Status:
+
 Current Limit: 80%
+
 Charging State: Not charging
+
 Battery Level: 76%
 
 ---
