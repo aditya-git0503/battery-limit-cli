@@ -1,0 +1,52 @@
+#!/bin/bash
+
+BAT_PATH=""
+
+# Detect battery path
+if [ -d "/sys/class/power_supply/BAT0" ]; then
+    BAT_PATH="/sys/class/power_supply/BAT0"
+elif [ -d "/sys/class/power_supply/BAT1" ]; then
+    BAT_PATH="/sys/class/power_supply/BAT1"
+else
+    echo "No battery found!"
+    exit 1
+fi
+
+THRESHOLD_FILE="$BAT_PATH/charge_control_end_threshold"
+
+# Check if supported
+if [ ! -f "$THRESHOLD_FILE" ]; then
+    echo "Charge control not supported on this device."
+    exit 1
+fi
+
+# Function to set limit
+set_limit() {
+    echo $1 | sudo tee "$THRESHOLD_FILE"
+    echo "Battery limit set to $1%"
+}
+
+# Function to show status
+show_status() {
+    LIMIT=$(cat "$THRESHOLD_FILE")
+    STATUS=$(cat "$BAT_PATH/status")
+    CAPACITY=$(cat "$BAT_PATH/capacity")
+
+    echo "Battery Status:"
+    echo "Current Limit: $LIMIT%"
+    echo "Charging State: $STATUS"
+    echo "Battery Level: $CAPACITY%"
+}
+
+# Main logic
+case "$1" in
+    60|80|100)
+        set_limit $1
+        ;;
+    status)
+        show_status
+        ;;
+    *)
+        echo "Usage: battery [60|80|100|status]"
+        ;;
+esac
