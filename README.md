@@ -1,8 +1,8 @@
-# 🔋 Battery Limit CLI (Linux)
+# Battery Limit CLI (Linux)
 
-A simple CLI tool to control battery charging limits (60%, 80%, 100%) on Linux laptops.
+A simple CLI tool to control battery charging limits (60%, 80%, 100%) on Linux laptops. An Ubuntu alternative to apps like MyASUS that can limit battery percentage for better health. 
 
-## ✨ Features
+## Features
 
 - Set battery charge limit: 60 / 80 / 100
 - Check battery status
