@@ -1,0 +1,108 @@
+#!/bin/bash
+
+set -u
+
+find_battery() {
+    local bat
+
+    for bat in /sys/class/power_supply/BAT*; do
+        [ -d "$bat" ] || continue
+
+        if [ -f "$bat/charge_control_end_threshold" ]; then
+            printf '%s\n' "$bat"
+            return 0
+        fi
+    done
+
+    return 1
+}
+
+usage() {
+    echo "Usage: battery [60|80|100|status]"
+}
+
+is_valid_limit() {
+    case "$1" in
+        60|80|100) return 0 ;;
+        *) return 1 ;;
+    esac
+}
+
+set_limit() {
+    local limit="$1"
+    local bat_path="$2"
+    local threshold_file="$bat_path/charge_control_end_threshold"
+
+    if ! printf '%s\n' "$limit" > "$threshold_file"; then
+        echo "Failed to set battery limit to $limit%." >&2
+        return 1
+    fi
+
+    echo "Battery limit set to $limit%."
+}
+
+show_status() {
+    local bat_path="$1"
+    local threshold_file="$bat_path/charge_control_end_threshold"
+    local limit
+    local status
+    local capacity
+
+    limit=$(cat "$threshold_file") || return 1
+    status=$(cat "$bat_path/status") || return 1
+    capacity=$(cat "$bat_path/capacity") || return 1
+
+    echo "Battery Status:"
+    echo "Battery: ${bat_path##*/}"
+    echo "Current Limit: $limit%"
+    echo "Charging State: $status"
+    echo "Battery Level: $capacity%"
+}
+
+main() {
+    local command="${1:-}"
+    local bat_path
+
+    case "$command" in
+        60|80|100)
+            # Keep the privilege boundary in one place. The extension and
+            # command-line users both invoke this script normally; only the
+            # write operation needs administrator privileges.
+            if [ "$(id -u)" -ne 0 ]; then
+                SCRIPT_PATH="$(readlink -f "$0")"
+                exec pkexec "$SCRIPT_PATH" "$command"
+            fi
+
+            if ! bat_path=$(find_battery); then
+                echo "No supported battery found." >&2
+                return 1
+            fi
+
+            set_limit "$command" "$bat_path"
+            ;;
+        status)
+            if ! bat_path=$(find_battery); then
+                echo "No supported battery found." >&2
+                return 1
+            fi
+
+            show_status "$bat_path"
+            ;;
+        *)
+            usage >&2
+            return 2
+            ;;
+    esac
+}
+
+if [ "$#" -ne 1 ]; then
+    usage >&2
+    exit 2
+fi
+
+if ! is_valid_limit "$1" && [ "$1" != "status" ]; then
+    usage >&2
+    exit 2
+fi
+
+main "$1"
