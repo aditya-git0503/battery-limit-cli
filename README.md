@@ -4,7 +4,7 @@ Battery Limit CLI is a lightweight utility for controlling battery charging limi
 
 It allows users to stop charging at 60%, 80%, or 100%, helping improve long-term battery health and reduce battery wear.
 
-An approved GNOME Shell extension is also available, providing a graphical interface directly from the GNOME top panel.
+An officially approved GNOME Shell extension is also available, providing a graphical interface directly from the GNOME top panel.
 
 ## Features
 
@@ -20,145 +20,31 @@ An approved GNOME Shell extension is also available, providing a graphical inter
 
 The project includes an officially approved GNOME Shell extension that allows battery charge limits to be changed directly from the GNOME panel.
 
-Features:
+> **Important:** The GNOME Shell extension requires the `battery` CLI to be installed separately. Installing the extension from GNOME Extensions or Extension Manager does **not** install the CLI automatically.
+
+### Extension Features
 
 * One-click charge limit selection (60%, 80%, 100%)
+* Uses the `battery` CLI for battery limit changes
 * Secure authentication using `pkexec`
 * Reports command failures instead of claiming success
 * Native GNOME Shell integration
 * Minimal and lightweight user interface
 
-GNOME Extension:
+### GNOME Extension
+
+Install the extension from GNOME Extensions:
 
 https://extensions.gnome.org/extension/9584/battery-limit/
 
-## Screenshot
+### CLI Requirement
 
-![Battery Limit GNOME Extension](assets/gnome-menu.png)
+The `battery` CLI must be installed before using the GNOME Shell extension.
 
-## Repository Structure
-
-```text
-battery-limit-cli/
-├── extension/
-│   └── battery-limit@aditya/
-│       ├── extension.js
-│       └── metadata.json
-├── assets/
-│   └── gnome-menu.png
-├── battery
-├── battery-limit.zip
-├── LICENSE
-└── README.md
-```
-
-## Requirements
-
-Your system must expose the following interface:
-
-```text
-/sys/class/power_supply/BAT*/charge_control_end_threshold
-```
-
-If this file does not exist, battery charge limiting is not supported and the tool will not function.
-
-## Installation
-
-### Option 1: Install Using the Debian Package
-
-Download the latest release from GitHub Releases and install it:
-
-```bash
-sudo dpkg -i battery-limit_1.0_all.deb
-```
-
-### Option 2: Manual Installation
+Install the CLI with:
 
 ```bash
 git clone https://github.com/aditya-git0503/battery-limit-cli.git
 cd battery-limit-cli
 
 sudo install -Dm755 battery /usr/local/bin/battery
-```
-
-## Usage
-
-### Set Charge Limit
-
-```bash
-battery 60
-battery 80
-battery 100
-```
-
-### Check Battery Status
-
-```bash
-battery status
-```
-
-## Example Output
-
-```text
-Battery Status:
-Current Limit: 80%
-Charging State: Not charging
-Battery Level: 76%
-```
-
-## Installing the GNOME Extension
-
-### From GNOME Extensions
-
-Install directly from:
-
-https://extensions.gnome.org/extension/9584/battery-limit/
-
-### Manual Installation
-
-```bash
-mkdir -p ~/.local/share/gnome-shell/extensions/
-
-cp -r extension/battery-limit@aditya \
-~/.local/share/gnome-shell/extensions/
-
-gnome-extensions enable battery-limit@aditya
-```
-
-## Permissions
-
-Changing battery charge limits requires elevated privileges.
-
-The CLI uses `pkexec` only when a write operation needs administrator privileges. The GNOME extension invokes the same CLI, so there is a single privilege boundary and no nested `sudo` call.
-
-A system password prompt will appear when applying a new charge limit. The `status` command does not require administrator privileges.
-
-## Tested On
-
-* ASUS Vivobook S14 (i7-13620H)
-* Ubuntu 24.04.4 LTS
-* GNOME Shell 46
-
-GNOME Shell 50 support is included in v4 and should be verified on a GNOME 50 system before release.
-
-## Notes
-
-* Changes take effect immediately
-* If the current battery level exceeds the selected limit, charging will pause until the battery level falls below the configured threshold
-* Hardware support varies by manufacturer and model
-* Not all Linux laptops expose battery charge threshold controls
-
-## Future Improvements
-
-* Live battery percentage display in the GNOME panel
-* Dynamic battery icon updates
-* Improved support for additional hardware vendors
-* Better handling of unsupported systems
-
-## Contributing
-
-Issues, feature requests, and pull requests are welcome.
-
-## License
-
-MIT License
